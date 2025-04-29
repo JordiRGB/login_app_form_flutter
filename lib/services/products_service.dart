@@ -77,8 +77,8 @@ class ProductsServices extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<String?> uploadImage(File image) async {
-    if (image.path.isEmpty) return null;
+  Future<String?> uploadImage() async {
+    if (newPictureFile == null) return null;
 
     isSaving = true;
     notifyListeners();
@@ -88,11 +88,9 @@ class ProductsServices extends ChangeNotifier {
     );
 
     final imageUploadRequest = http.MultipartRequest('POST', url);
-    final file = await http.MultipartFile.fromPath('file', image.path);
+    final file =
+        await http.MultipartFile.fromPath('file', newPictureFile!.path);
     imageUploadRequest.files.add(file);
-
-    // ✅ Usa el nombre correcto del preset configurado en Cloudinary
-    // imageUploadRequest.fields['upload_preset'] = 'products070201';
 
     final streamResponse = await imageUploadRequest.send();
     final response = await http.Response.fromStream(streamResponse);
@@ -105,7 +103,6 @@ class ProductsServices extends ChangeNotifier {
     }
 
     final decodedData = json.decode(response.body);
-    return decodedData[
-        'secure_url']; // ✅ Así obtienes la URL final de la imagen
+    return decodedData['secure_url'];
   }
 }

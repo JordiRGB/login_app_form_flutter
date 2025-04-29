@@ -82,20 +82,20 @@ class _ProductsScreenBody extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          if (!productForm.isValidform()) return;
+        onPressed: productServices.isSaving
+            ? null
+            : () async {
+                if (!productForm.isValidform()) return;
 
-          String? imageUrl;
+                final String? imageUrl = await productServices.uploadImage();
 
-          if (productServices.newPictureFile != null) {
-            imageUrl = await productServices
-                .uploadImage(productServices.newPictureFile!);
-            productForm.product.picture = imageUrl ?? '';
-          }
+                if (imageUrl != null) productForm.product.picture = imageUrl;
 
-          await productServices.saveorCreateProduct(productForm.product);
-        },
-        child: const Icon(Icons.save),
+                await productServices.saveorCreateProduct(productForm.product);
+              },
+        child: productServices.isSaving
+            ? const CircularProgressIndicator(color: Colors.white)
+            : const Icon(Icons.save_outlined),
       ),
     );
   }
@@ -111,7 +111,7 @@ class _ProductForm extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         width: double.infinity,
-        height: 280,
+        height: 300,
         decoration: _builBoxDecoration(),
         child: Form(
           key: productForm.formKey,
