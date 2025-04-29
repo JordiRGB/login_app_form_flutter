@@ -5,10 +5,9 @@ import 'package:provider/provider.dart';
 
 import '../providers/login_form_provider.dart';
 import '../services/auth_service.dart';
-import '../services/services.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+class RegisterScreen extends StatelessWidget {
+  const RegisterScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +25,7 @@ class LoginScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       const SizedBox(height: 10),
-                      Text('Login',
+                      Text('Crear cuenta',
                           style: Theme.of(context).textTheme.headlineMedium),
                       const SizedBox(height: 30),
                       _LoginForm(), // ✅ Solo una instancia aquí
@@ -38,13 +37,13 @@ class LoginScreen extends StatelessWidget {
               const SizedBox(height: 50),
               TextButton(
                   onPressed: () =>
-                      Navigator.pushReplacementNamed(context, 'register'),
+                      Navigator.pushReplacementNamed(context, 'login'),
                   style: ButtonStyle(
                       overlayColor: MaterialStateProperty.all(
                           Colors.indigo.withOpacity(0.1)),
                       shape: MaterialStateProperty.all(StadiumBorder())),
                   child: const Text(
-                    'Crear cuenta',
+                    'Ya tienes una cuenta?',
                     style: TextStyle(fontSize: 18, color: Colors.black87),
                   )),
               const SizedBox(height: 50),
@@ -117,7 +116,7 @@ class _LoginForm extends StatelessWidget {
                     if (!loginForm.isValidForm()) return;
                     loginForm.isLoading = true;
 
-                    final String? errorMessage = await authService.login(
+                    final String? errorMessage = await authService.createUser(
                         loginForm.email, loginForm.password);
                     if (errorMessage == null) {
                       Navigator.pushReplacementNamed(
@@ -125,7 +124,7 @@ class _LoginForm extends StatelessWidget {
                         'home',
                       );
                     } else {
-                      NotificationsService.showSnackBar(errorMessage);
+                      print(errorMessage);
                       loginForm.isLoading = false;
                     }
                   },
